@@ -1,0 +1,10 @@
+.env
+workspace/*
+!workspace/.gitkeep
+docs/*
+!docs/.gitkeep
+test-cases/*
+!test-cases/.gitkeep
+*.log
+node_modules/
+__pycache__/

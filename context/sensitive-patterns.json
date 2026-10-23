@@ -1,0 +1,23 @@
+{
+  "_comment": "Regexes used by scripts/scan_logs.py and the db-verify skill. Tuned for Colombian fintech data. Add/adjust per service.",
+  "patterns": [
+    { "name": "msisdn_co_full",      "severity": "CRITICAL", "regex": "(?<![0-9])(?:\\+?57)?3[0-9]{9}(?![0-9])",                       "note": "Colombian mobile number, unmasked" },
+    { "name": "cedula_co",           "severity": "HIGH",     "regex": "(?i)(cedula|cc|documento|document_?id|nuip)\\\"?\\s*[:=]\\s*\\\"?[0-9]{6,10}", "note": "Colombian national id next to a label" },
+    { "name": "card_pan",            "severity": "CRITICAL", "regex": "(?<![0-9])(?:4[0-9]{12}(?:[0-9]{3})?|5[1-5][0-9]{14}|3[47][0-9]{13})(?![0-9])", "note": "Visa/MC/Amex PAN (Luhn checked in script)" },
+    { "name": "cvv_labelled",        "severity": "CRITICAL", "regex": "(?i)\\b(cvv|cvc|cvv2)\\\"?\\s*[:=]\\s*\\\"?[0-9]{3,4}" },
+    { "name": "pin_labelled",        "severity": "CRITICAL", "regex": "(?i)\\b(pin|clave|nip)\\\"?\\s*[:=]\\s*\\\"?[0-9]{4,8}\\b" },
+    { "name": "password_labelled",   "severity": "CRITICAL", "regex": "(?i)(password|passwd|pwd|contrase[nñ]a)\\\"?\\s*[:=]\\s*\\\"?[^\\s\\\",}]{3,}" },
+    { "name": "otp_labelled",        "severity": "HIGH",     "regex": "(?i)\\b(otp|codigo|code)\\\"?\\s*[:=]\\s*\\\"?[0-9]{4,8}\\b" },
+    { "name": "jwt",                 "severity": "CRITICAL", "regex": "eyJ[A-Za-z0-9_-]{10,}\\.[A-Za-z0-9_-]{10,}\\.[A-Za-z0-9_-]{10,}" },
+    { "name": "bearer_header",       "severity": "CRITICAL", "regex": "(?i)authorization\\\"?\\s*[:=]\\s*\\\"?(bearer|basic)\\s+[A-Za-z0-9._\\-+/=]{16,}" },
+    { "name": "api_key_labelled",    "severity": "HIGH",     "regex": "(?i)(api[_-]?key|x-api-key|client_secret|secret)\\\"?\\s*[:=]\\s*\\\"?[A-Za-z0-9._\\-]{12,}" },
+    { "name": "private_key",         "severity": "CRITICAL", "regex": "-----BEGIN (RSA |EC |OPENSSH )?PRIVATE KEY-----" },
+    { "name": "aws_access_key",      "severity": "CRITICAL", "regex": "AKIA[0-9A-Z]{16}" },
+    { "name": "email",               "severity": "MEDIUM",   "regex": "[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}", "note": "allowed if masked (j***@domain)" },
+    { "name": "jdbc_with_password",  "severity": "CRITICAL", "regex": "(?i)jdbc:mysql://[^\\s]*password=[^\\s&]+" },
+    { "name": "sql_in_response_or_log", "severity": "HIGH",  "regex": "(?i)\\b(select|insert|update|delete)\\b[^\\n]{0,80}\\b(from|into|set|where)\\b[^\\n]{0,80}\\b(where|values|=)" , "note": "raw SQL leaking (ignore in DEBUG of known SQL loggers if TEST profile)" },
+    { "name": "stack_trace",         "severity": "MEDIUM",   "regex": "\\bat [a-z]+(\\.[a-zA-Z0-9_$]+)+\\([A-Za-z0-9_$]+\\.java:[0-9]+\\)" },
+    { "name": "public_ip",           "severity": "HIGH",     "regex": "(?<![0-9.])(?!10\\.)(?!127\\.)(?!172\\.(?:1[6-9]|2[0-9]|3[01])\\.)(?!192\\.168\\.)(?!169\\.254\\.)(?!0\\.)(?:[1-9][0-9]?|1[0-9]{2}|2[0-4][0-9]|25[0-5])(?:\\.(?:[0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])){3}(?![0-9.])", "note": "non-RFC1918 IPv4" }
+  ],
+  "allowed_masked_examples": ["57300****123", "j***@movii.com", "****1234"]
+}

@@ -1,0 +1,67 @@
+{
+  "mcpServers": {
+    "azure-devops": {
+      "type": "stdio",
+      "command": "npx",
+      "args": [
+        "-y",
+        "@azure-devops/mcp",
+        "${ADO_ORG}",
+        "--authentication",
+        "pat",
+        "-d",
+        "core",
+        "repositories",
+        "pipelines",
+        "work-items",
+        "test-plans"
+      ],
+      "env": {
+        "PERSONAL_ACCESS_TOKEN": "${ADO_PAT_B64}"
+      }
+    },
+    "kubernetes": {
+      "type": "stdio",
+      "command": "npx",
+      "args": [
+        "-y",
+        "kubernetes-mcp-server@latest",
+        "--read-only",
+        "--kubeconfig",
+        "${KUBECONFIG_TEST}"
+      ]
+    },
+    "mysql": {
+      "type": "stdio",
+      "command": "npx",
+      "args": [
+        "-y",
+        "@benborla29/mcp-server-mysql"
+      ],
+      "env": {
+        "MYSQL_HOST": "${MYSQL_TEST_HOST}",
+        "MYSQL_PORT": "${MYSQL_TEST_PORT}",
+        "MYSQL_USER": "${MYSQL_TEST_RO_USER}",
+        "MYSQL_PASS": "${MYSQL_TEST_RO_PASS}",
+        "MYSQL_DB": "${MYSQL_TEST_DB}",
+        "ALLOW_INSERT_OPERATION": "false",
+        "ALLOW_UPDATE_OPERATION": "false",
+        "ALLOW_DELETE_OPERATION": "false"
+      }
+    },
+    "k6": {
+      "type": "stdio",
+      "command": "docker",
+      "args": [
+        "run",
+        "--rm",
+        "-i",
+        "--network",
+        "host",
+        "grafana/mcp-k6",
+        "-t",
+        "stdio"
+      ]
+    }
+  }
+}

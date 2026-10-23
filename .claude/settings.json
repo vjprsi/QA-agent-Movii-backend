@@ -1,0 +1,172 @@
+{
+  "permissions": {
+    "allow": [
+      "Read",
+      "Grep",
+      "Glob",
+      "Write",
+      "Edit",
+      "Bash(git clone:*)",
+      "Bash(git -C:*)",
+      "Bash(git checkout:*)",
+      "Bash(git fetch:*)",
+      "Bash(git log:*)",
+      "Bash(git rev-parse:*)",
+      "Bash(git status:*)",
+      "Bash(git diff:*)",
+      "Bash(mvn:*)",
+      "Bash(./mvnw:*)",
+      "Bash(gradle:*)",
+      "Bash(./gradlew:*)",
+      "Bash(java:*)",
+      "Bash(newman:*)",
+      "Bash(npx newman:*)",
+      "Bash(k6:*)",
+      "Bash(kubectl get:*)",
+      "Bash(kubectl describe:*)",
+      "Bash(kubectl logs:*)",
+      "Bash(kubectl top:*)",
+      "Bash(kubectl rollout status:*)",
+      "Bash(kubectl config:*)",
+      "Bash(kubectl events:*)",
+      "Bash(mysql:*)",
+      "Bash(curl:*)",
+      "Bash(python3:*)",
+      "Bash(py -3:*)",
+      "Bash(python:*)",
+      "Bash(node:*)",
+      "Bash(bash scripts/:*)",
+      "Bash(semgrep:*)",
+      "Bash(gitleaks:*)",
+      "Bash(trivy:*)",
+      "Bash(ls:*)",
+      "Bash(cat:*)",
+      "Bash(jq:*)",
+      "Bash(date:*)",
+      "Bash(mkdir:*)",
+      "Bash(cp:*)",
+      "Bash(wc:*)",
+      "Bash(head:*)",
+      "Bash(tail:*)",
+      "Bash(sort:*)",
+      "Bash(which:*)",
+      "mcp__azure-devops",
+      "mcp__kubernetes",
+      "mcp__mysql",
+      "mcp__k6",
+      "mcp__plugin_movii-oci-mcp_movii-oci",
+      "mcp__plugin_mcp-movii-logs_mcp-movii-logs",
+      "mcp__plugin_mcp-movii-metrics_mcp-movii-metrics",
+      "mcp__plugin_mcp-movii-traces_mcp-movii-traces",
+      "mcp__plugin_movii-backend-mcp_movii-backend",
+      "mcp__plugin_movii-rag-qa-mcp_rag-qa"
+    ],
+    "deny": [
+      "Bash(git push:*)",
+      "Bash(git commit:*)",
+      "Bash(git reset --hard:*)",
+      "Bash(kubectl apply:*)",
+      "Bash(kubectl delete:*)",
+      "Bash(kubectl scale:*)",
+      "Bash(kubectl edit:*)",
+      "Bash(kubectl exec:*)",
+      "Bash(kubectl patch:*)",
+      "Bash(kubectl create:*)",
+      "Bash(kubectl replace:*)",
+      "Bash(kubectl drain:*)",
+      "Bash(helm:*)",
+      "Bash(rm -rf:*)",
+      "Bash(sudo:*)",
+      "Read(./.env)",
+      "Read(./.env.*)",
+      "Read(~/.kube/**)",
+      "Read(~/.oci/**)",
+      "mcp__kubernetes__pods_delete",
+      "mcp__kubernetes__pods_exec",
+      "mcp__kubernetes__pods_run",
+      "mcp__kubernetes__resources_delete",
+      "mcp__kubernetes__resources_create_or_update",
+      "mcp__kubernetes__helm_install",
+      "mcp__kubernetes__helm_uninstall",
+      "mcp__azure-devops__repo_pull_request_write",
+      "mcp__azure-devops__repo_create_branch"
+    ],
+    "ask": [
+      "Bash(docker:*)",
+      "Bash(kill:*)",
+      "Bash(az pipelines run:*)",
+      "mcp__azure-devops__pipelines_write",
+      "mcp__azure-devops__wit_create_work_item",
+      "mcp__azure-devops__wit_update_work_item",
+      "mcp__azure-devops__testplan_test_plan_write",
+      "mcp__azure-devops__testplan_test_suite_write",
+      "mcp__azure-devops__testplan_test_case_write"
+    ]
+  },
+  "model": "claude-opus-5-5",
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"$CLAUDE_PROJECT_DIR/.claude/hooks/run_hook.sh\" guard_bash.py"
+          }
+        ]
+      },
+      {
+        "matcher": "mcp__(plugin_.+_)?mysql__.*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"$CLAUDE_PROJECT_DIR/.claude/hooks/run_hook.sh\" guard_mysql.py"
+          }
+        ]
+      },
+      {
+        "matcher": "mcp__(plugin_.+_)?(kubernetes|k8s)__.*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"$CLAUDE_PROJECT_DIR/.claude/hooks/run_hook.sh\" guard_k8s.py"
+          }
+        ]
+      },
+      {
+        "matcher": "mcp__plugin_(movii|mcp-movii)[^_]*_.*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"$CLAUDE_PROJECT_DIR/.claude/hooks/run_hook.sh\" guard_readonly_mcp.py"
+          }
+        ]
+      },
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"$CLAUDE_PROJECT_DIR/.claude/hooks/run_hook.sh\" guard_write_paths.py"
+          }
+        ]
+      }
+    ]
+  },
+  "enabledPlugins": {
+    "movii-oci-mcp@movii-marketplace": true,
+    "mcp-movii-logs@movii-marketplace": true,
+    "mcp-movii-metrics@movii-marketplace": true,
+    "mcp-movii-traces@movii-marketplace": true,
+    "movii-backend-mcp@movii-marketplace": true,
+    "movii-rag-qa-mcp@movii-marketplace": true
+  },
+  "extraKnownMarketplaces": {
+    "movii-marketplace": {
+      "source": {
+        "source": "git",
+        "url": "https://dev.azure.com/movii/transversal/movii-marketplace-claude/_git/movii-marketplace-claude"
+      }
+    }
+  }
+}

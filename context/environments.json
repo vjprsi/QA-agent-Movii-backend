@@ -1,0 +1,64 @@
+{
+  "_comment": "The ONLY targets the QA agent may touch. Hooks enforce this file. Edit per company, never add production.",
+  "environment": "TEST",
+  "allowed_api_hosts": [
+    "*.test.movii.internal",
+    "*-test.movii.com.co",
+    "api-test.movii.com.co"
+  ],
+  "allowed_db_hosts": [
+    "mysql-test.internal",
+    "*.test.db.internal"
+  ],
+  "allowed_db_schemas": [
+    "*_test",
+    "qa_*"
+  ],
+  "kubernetes": {
+    "context": "oke-test",
+    "allowed_namespaces": [
+      "*-qa",
+      "qa-*",
+      "test-*"
+    ],
+    "pod_label_key": "app"
+  },
+  "azure_devops": {
+    "org": "movii",
+    "project": "your-project",
+    "deploy_pipeline_name_pattern": "*-deploy-test",
+    "bug_area_path": "your-project\\QA",
+    "bug_iteration_path": "your-project"
+  },
+  "oracle_cloud": {
+    "region": "sa-bogota-1",
+    "test_compartment_name": "qa",
+    "_comment": "OCI is reached through the movii-oci-mcp plugin (read-only, compartment aliases dev|qa). Use qa."
+  },
+  "forbidden_markers": [
+    "prod",
+    "prd",
+    "production",
+    "live",
+    "master-db",
+    "staging",
+    "stg"
+  ],
+  "sla_defaults": {
+    "p95_ms": 800,
+    "p99_ms": 1500,
+    "error_rate_max": 0.01,
+    "pod_memory_limit_pct_max": 85,
+    "pod_cpu_limit_pct_max": 85
+  },
+  "observability": {
+    "_comment": "movii marketplace MCPs (Loki/Mimir/Tempo) cover dev, qa and staging. The QA agent uses qa only.",
+    "environment": "qa",
+    "loki_labels": {
+      "namespace": "k8s_namespace_name",
+      "pod": "k8s_pod_name",
+      "service": "service_name",
+      "cluster": "okedev"
+    }
+  }
+}

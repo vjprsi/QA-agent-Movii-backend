@@ -1,0 +1,6 @@
+# QA Tester Agent — Python dependencies for the harness and report generators.
+#   pip install -r requirements.txt
+openpyxl        # Excel: scripts/cases_to_xlsx.py (test-plan.xlsx / test-cases.xlsx)
+python-docx     # Word:  scripts/results_to_docx.py (word/*.docx)
+markdown        # optional: nicer QA-REPORT.html (md_to_html.py falls back without it)
+cryptography    # AES-CBC field encryption in service harnesses that need it
